@@ -1,0 +1,131 @@
+body {
+    padding-top: 65px;
+    margin: 0;
+    overflow-y: hidden;
+    height: 100vh;
+}
+
+.logo {
+    height: 20px
+}
+
+.navbar {
+    background-color: green;
+}
+
+#search-navbar {
+    background-color: lightgray;
+    padding:0;
+    padding-top: 10px;
+    padding-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: calc(100% - 65px);
+    overflow-y: auto; /* Allow vertical scrolling within the search navbar */
+}
+
+
+#searchbtn {
+    background-color: green;
+    color:white;
+}
+
+#floors .list-group-item {
+    margin: 0;
+    padding: 10px;
+    font-weight: bolder;
+    font-size:18px;
+    text-decoration: underline;
+}
+#floors {
+    flex-grow: 3;
+
+}
+
+.form-check-input {
+    width: 4rem !important;
+    height: 2rem !important
+}
+
+
+.row {
+    height: 100vh !important;
+}
+
+.form-switch {
+    display: flex;
+    flex-direction: row-reverse; /* Reverse the order of the elements */
+    margin-right: 20px;
+}
+
+.form-check-label {
+    margin-right: 60px;
+    font-size: 18px
+}
+
+.bi-person-wheelchair {
+    height: 20px;
+}
+
+.adjustment-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-dialog {
+    max-width: 400px;
+}
+
+#map {
+    height: calc(100% - 65px);
+    z-index: 0;
+}
+
+#level-buttons {
+    position: absolute;
+    top: 20px; /* Adjust as needed */
+    left: 20px; /* Adjust as needed */
+    z-index: 1000; /* Ensure buttons are above the map */
+}
+
+#level-buttons button {
+    margin-right: 10px; /* Add spacing between buttons */
+    padding: 5px 10px; /* Adjust padding as needed */
+    background-color: #ffffff; /* Button background color */
+    border: 1px solid #cccccc; /* Button border */
+    border-radius: 5px; /* Button border radius */
+    cursor: pointer;
+}
+
+/* CSS to position the accessibility mode switch */
+.wheelchair-toggle {
+    position: absolute;
+    bottom: 10px; /* Adjust this value to your preference */
+    left: 10px; /* Adjust this value to your preference */
+    z-index: 1000; /* Ensure it's on top of other elements */
+}
+
+#recenter {
+    position: fixed;
+    z-index: 1000;
+    bottom: 150px; /* Position the button at the bottom */
+    right: 20px; /* Position the button at the right */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+/* Adjust the search input container */
+.mapboxgl-ctrl-geocoder {
+    width: 400px !important; /* Set a fixed width for the search container */
+    margin-top: 20px;
+    margin-left: 20px !important;
+}
+
+/* Adjust the input field */
+.mapboxgl-ctrl-geocoder input[type="text"] {
+    padding-left: 40px !important; /* Add padding on the right for the icon */
+}
+

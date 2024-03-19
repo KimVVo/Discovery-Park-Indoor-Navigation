@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNT Discovery Park Navigation</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+
+    <link href="style.css" rel="stylesheet" type="text/css" />
+
+    <script src="script.js"></script> <!-- .js file for color contrast features-->
+</head>
+
+
+<body>
+
+
+    <script
+        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet"
+        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+        type="text/css">
+
+
+    <!--navigation bar-->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand d-none d-md-flex " href="#" id="brand">
+                <span class="bi bi-geo-alt h2">
+                    UNT Discovery Park Indoor Navigation
+                </span>
+            </a>
+            <a class="navbar-brand d-lg-none d-md-none" href="#" id="brand">
+                <span class="bi bi-geo-alt h2">
+                </span>
+            </a>
+            <div class="dropdown">
+                <button class="btn btn-lg text-nowrap navbar-toggler-icon " type="button" id="dropdownMenuButton"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#adjustmentModal"
+                            onclick="createSliders()">Adjust Color</a></li>
+                    <li><a class="dropdown-item" href="#" id="feedbackButton" data-bs-toggle="modal"
+                            data-bs-target="#feedbackModal">Feedback</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="adjustmentModal" tabindex="-1" aria-labelledby="adjustmentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adjustmentModalLabel">Color Adjustment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+
+
+                </div>
+                <div class="modal-body">
+                    <div id="adjustmentButtons" class="adjustment-buttons">
+                        <!-- Adjustment sliders will be dynamically added here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="savePreferences()">Save</button>
+                    <button type="button" class="btn btn-primary" onclick="resetPreferences()">Reset</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Feedback Modal -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedbackForm">
+                        <div class="mb-3">
+                            <label for="feedbackText" class="form-label">Your Feedback</label>
+                            <textarea class="form-control" id="feedbackText" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--mapping-->
+    <section id="mapping">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3 d-flex flex-column" id="search-navbar">
+                    <!--search bar-->
+                    <form id="searchbar">
+                        <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                            id="searchInput"> -->
+                        <!-- Added id="searchInput" to the input field -->
+                        <!-- <button class="btn btn-outline-success" type="submit" id="searchbtn">Search</button> -->
+                        <!-- Added id="searchInput" to the input field -->
+                    </form>
+
+
+                    <div class="container-fluid wheelchair-toggle bottom-left">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="accessibilityToggle">
+                            <label class="form-check-label" for="accessibilityToggle">
+                                <span class="bi bi-person-wheelchair lead">
+                                    Accessibility Mode
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-9" id="mapping-area">
+                    <!-- Add toggle button -->
+
+                    <div id="map"></div>
+                    <button class="btn btn-outline-success" type="button" id="recenter"
+                    onclick="goBackToCenter()"><i class="bi bi-house-fill"></i></button>
+
+                    <!-- Mapbox GL Indoor -->
+                    <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
+                    <script src="mapbox-gl-indoorequal/dist/mapbox-gl-indoorequal.js"></script>
+                    <script
+                        src="https://unpkg.com/mapbox-gl-indoorequal@latest/dist/mapbox-gl-indoorequal.umd.min.js"></script>
+                    <link href="https://unpkg.com/mapbox-gl-indoorequal@latest/mapbox-gl-indoorequal.css"
+                        rel="stylesheet" />
+
+
+                    <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
+                    <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+
+
+                    <script
+                        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+                    <link rel="stylesheet"
+                        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+                        type="text/css">
+
+
+                    <script
+                        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js"></script>
+                    <link rel="stylesheet"
+                        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css">
+
+
+                    <script>
+                        // Your JavaScript code here
+                        mapboxgl.accessToken = 'pk.eyJ1Ijoia2ltdm8yMTExIiwiYSI6ImNsdGcwYmhoajB2czcyanA3YWlpZGh6dHQifQ.Niu8tgHPbGDSq09zYRBAFg';
+
+                        const map = new mapboxgl.Map({
+                            container: 'map',
+                            style: 'mapbox://styles/mapbox/streets-v11', // Example style, replace with your own
+                            center: [-97.153715, 33.254811], // Example center coordinates
+                            zoom: 19.7 // Example zoom level
+                        });
+
+                        const indoorEqual = new IndoorEqual(map, { apiKey: 'iek_WQaPa637GiMUujPIMZtRAm1FbHsX' });
+
+                        // Function to handle changing the level based on the selected option
+                        function changeLevel() {
+                            // Get the selected value from the floor selector
+                            const selectedLevel = document.getElementById('floorSelector').value;
+
+
+                            // Call a function to change the level based on the selected option
+                            indoorEqual.setLevel(selectedLevel);
+                        }
+
+
+                        map.addControl(indoorEqual);
+
+
+                        // Function to go back to the center of the map
+                        function goBackToCenter() {
+                            map.flyTo({
+                                center: [-97.153715, 33.254811], // Example center coordinates
+                                zoom: 19.7, // Example zoom level
+                                essential: true // prevents user from cancelling the transition
+                            });
+                        }
+
+                        map.addControl(
+                            new mapboxgl.GeolocateControl({
+                                positionOptions: {
+                                    enableHighAccuracy: true
+                                },
+                                // When active the map will receive updates to the device's location as it changes.
+                                trackUserLocation: true,
+                                // Draw an arrow next to the location dot to indicate which direction the device is heading.
+                                showUserHeading: true
+                            }),
+                            'bottom-left'
+                        );
+
+                    </script>
+
+
+                    <!-- <script>
+                        // Routing
+                        map.addControl(
+                            new MapboxDirections({
+                                accessToken: mapboxgl.accessToken
+                            }),
+                            'top-left'
+                        );
+
+
+                    </script> -->
+
+
+                    <script>
+                        // Add zoom and rotation controls to the map.
+                        const nav = new mapboxgl.NavigationControl({
+                            visualizePitch: true
+                        });
+                        map.addControl(nav, 'bottom-right');
+                    </script>
+
+                    <script>
+                        // Fetch the data.json file
+                        fetch('data.json')
+                            .then(response => response.json()) // Parse the JSON data
+                            .then(data => {
+                                // Use the data as needed
+                                console.log(data); // Logging the fetched data
+                                // Pass the fetched data to the forwardGeocoder function
+                                initializeMap(data);
+                            })
+                            .catch(error => console.error('Error fetching data:', error));
+
+                        function initializeMap(data) {
+                            // Your forwardGeocoder function using the fetched data
+                            function forwardGeocoder(query) {
+                                const matchingFeatures = [];
+                                for (const feature of data.features) {
+                                    // Handle queries with different capitalization
+                                    // than the source data by calling toLowerCase().
+                                    if (feature.id.toLowerCase().includes(query.toLowerCase())) {
+                                        // Add a room emoji as a prefix for custom
+                                        // data results.
+                                        feature['place_name'] = `🏠 Room ${feature.id}`;
+                                        feature['center'] = feature.geometry.coordinates;
+                                        feature['place_type'] = ['room'];
+                                        matchingFeatures.push(feature);
+                                    }
+                                }
+                                return matchingFeatures;
+                            }
+
+                            // Add the control to the map.
+                            const geocoder = new MapboxGeocoder({
+                                accessToken: mapboxgl.accessToken,
+                                localGeocoder: forwardGeocoder,
+                                zoom: 30,
+                                placeholder: 'Search for rooms',
+                                mapboxgl: mapboxgl
+                            });
+
+                            // Add the geocoder to your existing searchbar form
+                            const searchForm = document.getElementById('searchbar');
+                            searchForm.appendChild(geocoder.onAdd(map));
+                        }
+                    </script>
+
+                    
+
+
+                    <!--list item for viewing floor 1 and 2-->
+                    <div class="list-group" id="floors">
+                        <!-- <button class="list-group-item list-group-item-action border-3" id="floor1" onclick="indoorEqual.setLevel('1')">Floor 1</button>
+                        <button class="list-group-item list-group-item-action border-3" id="floor2" onclick="indoorEqual.setLevel('2')">Floor 2</button> -->
+                        <label for="floorSelector" class="form-label">Select Floor:</label>
+                        <select class="form-select" id="floorSelector" onchange="changeLevel()">
+                            <option value="1">Floor 1</option>
+                            <option value="2">Floor 2</option>
+                        </select>
+                    </div>
+                    
+
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+    </section>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
